@@ -24,6 +24,7 @@ import io.linuxserver.fleet.v2.client.docker.dockerhub.DockerHubApiClient;
 import io.linuxserver.fleet.v2.client.docker.dockerhub.DockerHubAuthenticator;
 import io.linuxserver.fleet.v2.client.docker.dockerhub.IDockerHubAuthenticator;
 import io.linuxserver.fleet.v2.client.docker.dockerhub.NoOpDockerHubAuthenticator;
+import io.linuxserver.fleet.v2.client.docker.nexus.NexusApiClient;
 import io.linuxserver.fleet.v2.client.docker.queue.DockerApiDelegate;
 import io.linuxserver.fleet.v2.client.rest.RestClient;
 import io.linuxserver.fleet.v2.db.DefaultImageDAO;
@@ -166,8 +167,27 @@ public class FleetAppController extends AbstractAppController implements Service
         synchroniseImage(imageKey);
     }
 
-    private DockerApiClient configureDockerApiClient() {
+private DockerApiClient configureDockerApiClient() {
 
+        if (getAppProperties().isNexusEnabled()) {
+            return configureNexusClient();
+        }
+        return configureDockerHubClient();
+    }
+
+    private DockerApiClient configureNexusClient() {
+        final RestClient nexusRestClient = new RestClient();
+        return new NexusApiClient(
+            nexusRestClient,
+            getAppProperties().getNexusUrl(),
+            getAppProperties().getNexusDockerRepository(),
+            getAppProperties().getNexusDockerPath(),
+            getAppProperties().getNexusUsername(),
+            getAppProperties().getNexusPassword()
+        );
+    }
+
+    private DockerApiClient configureDockerHubClient() {
         final RestClient dockerHubApiRestClient = new RestClient();
         final IDockerHubAuthenticator dockerHubAuthenticator;
         if (getAppProperties().isDockerHubAuthEnabled()) {

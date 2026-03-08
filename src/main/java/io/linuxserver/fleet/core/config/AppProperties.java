@@ -64,8 +64,32 @@ public class AppProperties {
         return getStringProperty("fleet.database.password");
     }
 
-    public final Path getStaticFilesPath() {
+public final Path getStaticFilesPath() {
         return Paths.get(FleetRuntime.CONFIG_BASE, getStringProperty("fleet.static.dirname")).toAbsolutePath();
+    }
+
+    public final boolean isNexusEnabled() {
+        return "true".equalsIgnoreCase(getStringProperty("fleet.nexus.enabled"));
+    }
+
+    public final String getNexusUrl() {
+        return getStringProperty("fleet.nexus.url");
+    }
+
+    public final String getNexusDockerRepository() {
+        return getStringProperty("fleet.nexus.docker.repository");
+    }
+
+    public final String getNexusDockerPath() {
+        return getStringProperty("fleet.nexus.docker.path");
+    }
+
+    public final String getNexusUsername() {
+        return getStringProperty("fleet.nexus.username");
+    }
+
+    public final String getNexusPassword() {
+        return getStringProperty("fleet.nexus.password");
     }
 
     public String getAppSecret() {
